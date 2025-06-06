@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Location Finder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <h1><i class="fas fa-globe-americas"></i> IP Location Finder</h1>
+            <p class="subtitle">Find geolocation data for any IP address</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <div class="input-section">
+                <input type="text" id="ipInput" placeholder="Enter IP address (e.g., 8.8.8.8)">
+                <button id="searchBtn"><i class="fas fa-search"></i> Search</button>
+                <button id="myIpBtn"><i class="fas fa-user"></i> Use My IP</button>
+            </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+        </div>
+          <div id="result" class="result-container">
+            <h2><i class="fas fa-map-marker-alt"></i> Location Information</h2>
+            <div id="locationInfo"></div>
+        </div>
+        </div>
+        
+        <div class="card api-card">
+            <h3><i class="fas fa-code"></i> API Usage</h3>
+            <div class="api-examples">
+                <div class="api-example">
+                    <h4>Get location by IP:</h4>
+                    <div class="code-container">
+                        <code>curl http://localhost:3000/location/{ip}</code>
+                        <button class="copy-btn" onclick="copyToClipboard('curl http://localhost:3000/location/8.8.8.8')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="api-example">
+                    <h4>Get your IP address:</h4>
+                    <div class="code-container">
+                        <code>curl http://localhost:3000/myip</code>
+                        <button class="copy-btn" onclick="copyToClipboard('curl http://localhost:3000/myip')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>&copy; 2025 IP Location Finder</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Command copied to clipboard');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
