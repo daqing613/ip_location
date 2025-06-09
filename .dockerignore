@@ -1,0 +1,22 @@
+# 版本控制
+.git
+.github
+.gitignore
+
+# 依赖
+node_modules
+npm-debug.log
+
+# 环境文件
+.env
+.env.*
+
+# 其他文件
+.vscode
+*.md
+!README.md
+Dockerfile
+.dockerignore
+kubernetes/
+tests/
+.github/

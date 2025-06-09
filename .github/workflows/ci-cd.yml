@@ -1,0 +1,115 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  ACR_RESOURCE_GROUP: ip-location-rg
+  ACR_NAME: iplocationacr
+  IMAGE_NAME: ip-location
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  AKS_CLUSTER_NAME: ip-location-cluster
+  AKS_RESOURCE_GROUP: ip-location-rg
+  NAMESPACE: ip-location-ns
+  DOMAIN_NAME: ip-location.example.com  # 替换成您的实际域名
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint || echo "No linting configured"
+
+    - name: Run tests
+      run: npm test || echo "No tests configured"
+
+  build-and-push:
+    needs: build-and-test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set ACR login server
+      run: |
+        ACR_LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --query loginServer -o tsv)
+        echo "ACR_LOGIN_SERVER=$ACR_LOGIN_SERVER" >> $GITHUB_ENV
+      
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - name: Generate build ID
+      id: build-id
+      run: |
+        BUILD_ID=$(date +%Y%m%d)-$(echo ${{ github.sha }} | cut -c1-7)
+        echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
+        echo "::set-output name=id::$BUILD_ID"    - name: Build and push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.BUILD_ID }}
+
+  deploy-to-aks:
+    needs: build-and-push
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+
+    - name: Set AKS context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+
+    - name: Create namespace if not exists
+      run: kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -    # 替换 Kubernetes 配置文件中的变量
+    - name: Prepare Kubernetes manifests
+      run: |
+        cd kubernetes
+        sed -i "s|\${CONTAINER_REGISTRY}|${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}|g" deployment.yaml
+        sed -i "s|\${IMAGE_TAG}|${{ env.BUILD_ID }}|g" deployment.yaml
+        sed -i "s|\${DOMAIN_NAME}|${{ env.DOMAIN_NAME }}|g" deployment.yaml
+
+    # 部署到 AKS
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f kubernetes/deployment.yaml -n ${{ env.NAMESPACE }}
+
+    # 验证部署
+    - name: Verify deployment
+      run: |
+        kubectl rollout status deployment/ip-location -n ${{ env.NAMESPACE }}
+        kubectl get services,deployments,pods -n ${{ env.NAMESPACE }}

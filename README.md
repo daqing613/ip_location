@@ -66,10 +66,42 @@ This will return your current IP address as plain text (not JSON).
 
 ```powershell
 # 使用 curl.exe（原生 curl）并静默模式输出
-curl.exe -s http://localhost:3000/myip
+curl.exe http://localhost:3000/myip
 
 # 或使用 Invoke-RestMethod 直接获取文本内容
 (Invoke-RestMethod http://localhost:3000/myip)
+```
+
+## Docker & Kubernetes Deployment
+
+### Using Docker
+
+```bash
+# Build a Docker image
+npm run docker:build
+
+# Run the application in a Docker container
+npm run docker:run
+```
+
+### Deploying to Azure Kubernetes Service (AKS)
+
+This application can be deployed to Azure Kubernetes Service with Azure Container Registry. Follow the detailed guides in the docs folder:
+
+1. [Azure Setup Guide](./docs/azure-setup.md) - How to set up Azure resources
+2. [Azure Container Registry Usage Guide](./docs/acr-usage-guide.md) - How to use ACR to build and store Docker images
+3. [CI/CD Guide](./docs/ci-cd-guide.md) - How to use GitHub Actions for CI/CD
+
+#### Quick Start with ACR and AKS
+
+After setting up Azure resources:
+
+```bash
+# Build and push Docker image to ACR
+npm run acr:build-push
+
+# Deploy to AKS
+npm run aks:deploy
 ```
 
 ## Technologies Used
@@ -77,6 +109,9 @@ curl.exe -s http://localhost:3000/myip
 - Node.js
 - Express.js
 - Axios
+- Docker & Kubernetes
+- Azure Container Registry & Azure Kubernetes Service
+- GitHub Actions for CI/CD
 - ipinfo.io API for geolocation data
 
 ## License
