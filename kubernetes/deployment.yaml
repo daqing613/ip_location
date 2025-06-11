@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: ip-location
-        image: ${CONTAINER_REGISTRY}/ip-location:${IMAGE_TAG}
+        image: iplocationacr.azurecr.io/ip-location:latest
         ports:
         - containerPort: 3000
         resources:
@@ -72,7 +72,7 @@ spec:
     - ${DOMAIN_NAME}
     secretName: ip-location-tls
   rules:
-  - host: ${DOMAIN_NAME}
+  - host: ip-location.example.com
     http:
       paths:
       - path: /
