@@ -46,9 +46,15 @@ jobs:
     permissions:
       contents: read
       packages: write
-    steps:    - name: Checkout code
+    steps:
+    - name: Checkout code
       uses: actions/checkout@v3
-      
+    
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+
     - name: Set ACR login server
       run: |
         ACR_LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --query loginServer -o tsv)
@@ -66,7 +72,8 @@ jobs:
       run: |
         BUILD_ID=$(date +%Y%m%d)-$(echo ${{ github.sha }} | cut -c1-7)
         echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
-        echo "::set-output name=id::$BUILD_ID"    - name: Build and push Docker image
+        echo "::set-output name=id::$BUILD_ID"
+    - name: Build and push Docker image
       uses: docker/build-push-action@v3
       with:
         context: .
@@ -77,7 +84,7 @@ jobs:
 
   deploy-to-aks:
     needs: build-and-push
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -113,3 +120,17 @@ jobs:
       run: |
         kubectl rollout status deployment/ip-location -n ${{ env.NAMESPACE }}
         kubectl get services,deployments,pods -n ${{ env.NAMESPACE }}
+
+    # 检查 NGINX Ingress Controller 并有条件 apply Ingress
+    - name: Check NGINX Ingress Controller and Apply Ingress
+      run: |
+        # 检查 admission webhook endpoints 是否存在
+        ENDPOINTS=$(kubectl get endpoints -n ingress-basic nginx-ingress-ingress-nginx-controller-admission --no-headers --ignore-not-found | awk '{print $2}')
+        if [ -z "$ENDPOINTS" ] || [ "$ENDPOINTS" = "<none>" ]; then
+          echo "WARNING: NGINX Ingress Controller admission webhook endpoints 不可用，跳过 Ingress 资源 apply。"
+          echo "请确保已在 AKS 集群中正确安装并启动 NGINX Ingress Controller。"
+          echo "参考：https://kubernetes.github.io/ingress-nginx/deploy/"
+        else
+          echo "NGINX Ingress Controller admission webhook endpoints 可用，开始 apply Ingress 资源。"
+          kubectl apply -f kubernetes/ingress.yaml -n ${{ env.NAMESPACE }}
+        fi
