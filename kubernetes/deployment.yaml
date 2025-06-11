@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: ip-location
-        image: ${CONTAINER_REGISTRY}/ip-location:${IMAGE_TAG}
+        image: iplocationacr.azurecr.io/ip-location:latest
         ports:
         - containerPort: 3000
         resources:
@@ -65,17 +65,18 @@ metadata:
   name: ip-location-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # 确保使用正确的注解
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # 增加更多调试信息
+    nginx.ingress.kubernetes.io/debug: "true"
 spec:
-  tls:
-  - hosts:
-    - ${DOMAIN_NAME}
-    secretName: ip-location-tls
   rules:
-  - host: ${DOMAIN_NAME}
+  - host: ip-location.example.com
     http:
       paths:
-      - path: /
+      - path: /(.*)
         pathType: Prefix
         backend:
           service:

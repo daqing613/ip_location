@@ -10,12 +10,12 @@
     "docker:build": "docker build -t ip-location .",
     "docker:run": "docker run -p 3000:3000 ip-location",
     "prepare-deployment": "node scripts/prepare-deployment.js",
-    "acr:test": "pwsh -File scripts/test-acr-connection.ps1 -ResourceGroup ip-location-rg -AcrName iplocationacr",
-    "acr:build-push": "pwsh -File scripts/acr-build-push.ps1 -ResourceGroup ip-location-rg -AcrName iplocationacr -ImageName ip-location",
-    "acr:build-push:version": "pwsh -File scripts/acr-build-push.ps1 -ResourceGroup ip-location-rg -AcrName iplocationacr -ImageName ip-location -ImageTag v$(npm --silent run-script version-only)",
+    "acr:test": "pwsh -File scripts/test-acr-connection.ps1 -ResourceGroup wprg001 -AcrName iplocationacr",
+    "acr:build-push": "pwsh -File scripts/acr-build-push.ps1 -ResourceGroup wprg001 -AcrName iplocationacr -ImageName ip-location",
+    "acr:build-push:version": "pwsh -File scripts/acr-build-push.ps1 -ResourceGroup wprg001 -AcrName iplocationacr -ImageName ip-location -ImageTag v$(npm --silent run-script version-only)",
     "version-only": "node -e \"console.log(require('./package.json').version)\"",
-    "aks:deploy": "pwsh -File scripts/deploy-to-aks.ps1 -ResourceGroup ip-location-rg -AksClusterName ip-location-cluster -AcrName iplocationacr -ImageName ip-location",
-    "aks:deploy:version": "pwsh -File scripts/deploy-to-aks.ps1 -ResourceGroup ip-location-rg -AksClusterName ip-location-cluster -AcrName iplocationacr -ImageName ip-location -ImageTag v$(npm --silent run-script version-only)"
+    "aks:deploy": "pwsh -File scripts/deploy-to-aks.ps1 -ResourceGroup wprg001 -AksClusterName wpaks001 -AcrName iplocationacr -ImageName ip-location",
+    "aks:deploy:version": "pwsh -File scripts/deploy-to-aks.ps1 -ResourceGroup wprg001 -AksClusterName wpaks001 -AcrName iplocationacr -ImageName ip-location -ImageTag v$(npm --silent run-script version-only)"
   },
   "keywords": [],
   "author": "",

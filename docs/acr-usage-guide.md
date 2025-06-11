@@ -45,17 +45,17 @@ npm run aks:deploy:version
 
 ```powershell
 # 基本用法
-pwsh -File .\scripts\acr-build-push.ps1 -ResourceGroup ip-location-rg -AcrName iplocationacr -ImageName ip-location
+pwsh -File .\scripts\acr-build-push.ps1 -ResourceGroup wprg001 -AcrName iplocationacr -ImageName ip-location
 
 # 指定自定义标签
-pwsh -File .\scripts\acr-build-push.ps1 -ResourceGroup ip-location-rg -AcrName iplocationacr -ImageName ip-location -ImageTag v1.2.3
+pwsh -File .\scripts\acr-build-push.ps1 -ResourceGroup wprg001 -AcrName iplocationacr -ImageName ip-location -ImageTag v1.2.3
 ```
 
 ### 部署到 AKS
 
 ```powershell
 # 基本用法
-pwsh -File .\scripts\deploy-to-aks.ps1 -ResourceGroup ip-location-rg -AksClusterName ip-location-cluster -AcrName iplocationacr -ImageName ip-location
+pwsh -File .\scripts\deploy-to-aks.ps1 -ResourceGroup wprg001 -AksClusterName wpaks001 -AcrName iplocationacr -ImageName ip-location
 
 # 自定义部署
 pwsh -File .\scripts\deploy-to-aks.ps1 -ResourceGroup custom-rg -AksClusterName custom-aks -AcrName custom-acr -ImageName ip-location -ImageTag v1.2.3 -Namespace custom-ns -DomainName custom.example.com
@@ -67,7 +67,7 @@ pwsh -File .\scripts\deploy-to-aks.ps1 -ResourceGroup custom-rg -AksClusterName 
 
 ```powershell
 # 确保已获取 AKS 凭据
-az aks get-credentials --resource-group ip-location-rg --name ip-location-cluster --overwrite-existing
+az aks get-credentials --resource-group wprg001 --name wpaks001 --overwrite-existing
 
 # 查看部署
 kubectl get deployment ip-location -n ip-location-ns
@@ -87,7 +87,7 @@ kubectl get svc,ingress -n ip-location-ns
 
 1. ACR 是否已经与 AKS 关联：
    ```powershell
-   az aks update --name ip-location-cluster --resource-group ip-location-rg --attach-acr iplocationacr
+   az aks update --name wpaks001 --resource-group wprg001 --attach-acr iplocationacr
    ```
    
 2. 镜像路径是否正确：

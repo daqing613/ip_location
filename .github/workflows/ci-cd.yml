@@ -2,18 +2,18 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
 
 env:
-  ACR_RESOURCE_GROUP: ip-location-rg
+  ACR_RESOURCE_GROUP: wprg001
   ACR_NAME: iplocationacr
   IMAGE_NAME: ip-location
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  AKS_CLUSTER_NAME: ip-location-cluster
-  AKS_RESOURCE_GROUP: ip-location-rg
+  AKS_CLUSTER_NAME: wpaks001
+  AKS_RESOURCE_GROUP: wprg001
   NAMESPACE: ip-location-ns
   DOMAIN_NAME: ip-location.example.com  # 替换成您的实际域名
 

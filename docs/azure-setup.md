@@ -82,7 +82,7 @@ echo "Password: $ACR_PASSWORD"
 az group create --name wprg001 --location eastus
 
 # 创建 AKS 集群
-az aks create --resource-group wprg001 --name wpaks001 --node-count 3 --enable-addons monitoring --generate-ssh-keys --node-vm-size Standard_B2s
+az aks create --resource-group wprg001 --name wpaks001 --node-count 1 --enable-addons monitoring --generate-ssh-keys --node-vm-size Standard_B2s
 
 # 获取凭据
 az aks get-credentials --resource-group wprg001 --name wpaks001
