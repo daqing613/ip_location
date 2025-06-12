@@ -106,14 +106,17 @@ jobs:
     - name: Prepare Kubernetes manifests
       run: |
         cd kubernetes
-        sed -i "s|\${CONTAINER_REGISTRY}|${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}|g" deployment.yaml
-        sed -i "s|\${IMAGE_TAG}|${{ env.BUILD_ID }}|g" deployment.yaml
+        TIMESTAMP=$(date +%s)
+        sed -i "s|\${TIMESTAMP}|$TIMESTAMP|g" deployment.yaml
+        sed -i "s|iplocationacr.azurecr.io/ip-location:latest|${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.BUILD_ID }}|g" deployment.yaml
         sed -i "s|\${DOMAIN_NAME}|${{ env.DOMAIN_NAME }}|g" deployment.yaml
 
     # 部署到 AKS
     - name: Deploy to AKS
       run: |
         kubectl apply -f kubernetes/deployment.yaml -n ${{ env.NAMESPACE }}
+        # 如果需要，强制重启部署
+        kubectl rollout restart deployment/ip-location -n ${{ env.NAMESPACE }}
 
     # 验证部署
     - name: Verify deployment

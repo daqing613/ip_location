@@ -18,10 +18,14 @@ spec:
     metadata:
       labels:
         app: ip-location
+      annotations:
+        # Add a timestamp annotation to ensure pod recreation when config changes
+        rollme: "${TIMESTAMP}"
     spec:
       containers:
       - name: ip-location
         image: iplocationacr.azurecr.io/ip-location:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         resources:
