@@ -121,16 +121,16 @@ jobs:
         kubectl rollout status deployment/ip-location -n ${{ env.NAMESPACE }}
         kubectl get services,deployments,pods -n ${{ env.NAMESPACE }}
 
-    # 检查 NGINX Ingress Controller 并有条件 apply Ingress
-    - name: Check NGINX Ingress Controller and Apply Ingress
+    # 检查 NGINX Ingress Controller 是否可用
+    - name: Check NGINX Ingress Controller Status
       run: |
         # 检查 admission webhook endpoints 是否存在
         ENDPOINTS=$(kubectl get endpoints -n ingress-basic nginx-ingress-ingress-nginx-controller-admission --no-headers --ignore-not-found | awk '{print $2}')
         if [ -z "$ENDPOINTS" ] || [ "$ENDPOINTS" = "<none>" ]; then
-          echo "WARNING: NGINX Ingress Controller admission webhook endpoints 不可用，跳过 Ingress 资源 apply。"
+          echo "WARNING: NGINX Ingress Controller admission webhook endpoints 不可用。"
           echo "请确保已在 AKS 集群中正确安装并启动 NGINX Ingress Controller。"
           echo "参考：https://kubernetes.github.io/ingress-nginx/deploy/"
+          echo "Ingress 资源已通过 deployment.yaml 申请，但可能无法正常工作。"
         else
-          echo "NGINX Ingress Controller admission webhook endpoints 可用，开始 apply Ingress 资源。"
-          kubectl apply -f kubernetes/ingress.yaml -n ${{ env.NAMESPACE }}
+          echo "NGINX Ingress Controller admission webhook endpoints 可用，Ingress 资源应该能正常工作。"
         fi
