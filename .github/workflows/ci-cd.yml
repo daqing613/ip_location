@@ -115,10 +115,48 @@ jobs:
         IMAGE_NAME="${{ env.IMAGE_NAME }}"
         IMAGE_TAG="${{ needs.build-and-push.outputs.BUILD_ID }}"
         
+        # Debug output to verify variables
+        echo "Debug - Variables:"
+        echo "CONTAINER_REGISTRY: $CONTAINER_REGISTRY"
+        echo "IMAGE_NAME: $IMAGE_NAME"
+        echo "IMAGE_TAG: $IMAGE_TAG"
+        echo "FULL IMAGE: $CONTAINER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
+        
+        # Check if ACR_LOGIN_SERVER is actually set
+        if [ -z "$CONTAINER_REGISTRY" ]; then
+          echo "ERROR: CONTAINER_REGISTRY is empty - using fallback value"
+          CONTAINER_REGISTRY="${{ env.ACR_NAME }}.azurecr.io"
+        fi
+        
+        # Make replacements and verify result
         sed -i "s|\${CONTAINER_REGISTRY}|$CONTAINER_REGISTRY|g" deployment.yaml
         sed -i "s|\${IMAGE_NAME}|$IMAGE_NAME|g" deployment.yaml
         sed -i "s|\${IMAGE_TAG}|$IMAGE_TAG|g" deployment.yaml
         sed -i "s|DOMAIN_NAME_PLACEHOLDER|${{ env.DOMAIN_NAME }}|g" deployment.yaml
+        
+        # Verify substitution worked
+        echo "After substitution - Image in deployment.yaml:"
+        grep -A 1 "image:" deployment.yaml
+        
+    # Configure AKS to access ACR
+    - name: Configure ACR access
+      run: |
+        # Attach ACR to AKS for image pull access
+        az aks update \
+          --name ${{ env.AKS_CLUSTER_NAME }} \
+          --resource-group ${{ env.AKS_RESOURCE_GROUP }} \
+          --attach-acr ${{ env.ACR_NAME }}
+      continue-on-error: true
+        
+    # Verify image exists in ACR
+    - name: Verify image in ACR
+      run: |
+        IMAGE="${{ needs.build-and-push.outputs.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.BUILD_ID }}"
+        echo "Checking if image exists: $IMAGE"
+        az acr repository show \
+          --name ${{ env.ACR_NAME }} \
+          --image ${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.BUILD_ID }} || \
+        echo "WARNING: Image not found in ACR. This may cause deployment failures."
 
     # Deploy to AKS
     - name: Deploy to AKS
