@@ -1,0 +1,47 @@
+{
+  "app": {
+    "title": "IP位置查询",
+    "subtitle": "查找任意IP地址的地理位置数据",
+    "copyright": "© 2025 IP位置查询"
+  },
+  "search": {
+    "placeholder": "输入IP地址（例如：8.8.8.8）",
+    "searchButton": "搜索",
+    "myIpButton": "使用我的IP",
+    "loading": "加载中..."
+  },
+  "result": {
+    "title": "位置信息",
+    "noData": "此IP没有可用的位置数据。",
+    "error": "错误：{{message}}",
+    "fields": {
+      "ip": "IP",
+      "hostname": "主机名",
+      "city": "城市",
+      "region": "地区",
+      "country": "国家",
+      "coordinates": "坐标",
+      "org": "组织",
+      "postal": "邮编",
+      "timezone": "时区"
+    }
+  },
+  "api": {
+    "title": "API使用",
+    "getLocation": "通过IP获取位置：",
+    "getIp": "获取您的IP地址：",
+    "copySuccess": "命令已复制到剪贴板"
+  },
+  "ipDisplay": {
+    "currentIp": "您当前的IP: {{ip}}"
+  },
+  "language": {
+    "changeLanguage": "更改语言",
+    "suggestion": "您要切换到{{language}}吗？",
+    "yes": "是",
+    "no": "否",
+    "en": "English",
+    "zh": "中文",
+    "es": "Español"
+  }
+}

@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const path = require('path');
 require('dotenv').config();
+const { detectLanguageFromIP, normalizeLangCode } = require('./utils/languageDetector');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,35 @@ app.get('/location/:ip', async (req, res) => {
   } catch (error) {
     console.error('Error fetching location data:', error.message);
     res.status(500).json({ error: 'Failed to fetch location data' });
+  }
+});
+
+// API to get recommended language based on IP
+app.get('/api/language-detect', async (req, res) => {
+  try {
+    const ip = req.headers['x-forwarded-for'] ||
+               req.connection.remoteAddress ||
+               req.socket.remoteAddress ||
+               (req.connection.socket ? req.connection.socket.remoteAddress : null);
+    
+    // Get accept-language header for browser preference
+    const acceptLanguage = req.headers['accept-language'] || '';
+    
+    // First try to detect from browser's accept-language header
+    let detectedLanguage = normalizeLangCode(acceptLanguage.split(',')[0]);
+    
+    // If no valid language detected from browser, try IP-based detection
+    if (detectedLanguage === 'en') {
+      detectedLanguage = await detectLanguageFromIP(ip);
+    }
+    
+    res.json({ 
+      detectedLanguage,
+      ip
+    });
+  } catch (error) {
+    console.error('Error detecting language:', error.message);
+    res.status(500).json({ error: 'Failed to detect language', language: 'en' });
   }
 });
 

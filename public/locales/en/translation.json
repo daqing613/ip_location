@@ -1,0 +1,47 @@
+{
+  "app": {
+    "title": "IP Location Finder",
+    "subtitle": "Find geolocation data for any IP address",
+    "copyright": "© 2025 IP Location Finder"
+  },
+  "search": {
+    "placeholder": "Enter IP address (e.g., 8.8.8.8)",
+    "searchButton": "Search",
+    "myIpButton": "Use My IP",
+    "loading": "Loading..."
+  },
+  "result": {
+    "title": "Location Information",
+    "noData": "No location data available for this IP.",
+    "error": "Error: {{message}}",
+    "fields": {
+      "ip": "IP",
+      "hostname": "Hostname",
+      "city": "City",
+      "region": "Region",
+      "country": "Country",
+      "coordinates": "Coordinates",
+      "org": "Organization",
+      "postal": "Postal",
+      "timezone": "Timezone"
+    }
+  },
+  "api": {
+    "title": "API Usage",
+    "getLocation": "Get location by IP:",
+    "getIp": "Get your IP address:",
+    "copySuccess": "Command copied to clipboard"
+  },
+  "ipDisplay": {
+    "currentIp": "Your Current IP: {{ip}}"
+  },
+  "language": {
+    "changeLanguage": "Change language",
+    "suggestion": "Would you like to switch to {{language}}?",
+    "yes": "Yes",
+    "no": "No",
+    "en": "English",
+    "zh": "中文",
+    "es": "Español"
+  }
+}

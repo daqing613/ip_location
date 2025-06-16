@@ -138,15 +138,7 @@ jobs:
         echo "After substitution - Image in deployment.yaml:"
         grep -A 1 "image:" deployment.yaml
         
-    # Configure AKS to access ACR
-    - name: Configure ACR access
-      run: |
-        # Attach ACR to AKS for image pull access
-        az aks update \
-          --name ${{ env.AKS_CLUSTER_NAME }} \
-          --resource-group ${{ env.AKS_RESOURCE_GROUP }} \
-          --attach-acr ${{ env.ACR_NAME }}
-      continue-on-error: true
+
         
     # Verify image exists in ACR
     - name: Verify image in ACR

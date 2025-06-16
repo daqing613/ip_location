@@ -1,0 +1,47 @@
+{
+  "app": {
+    "title": "Buscador de Localización IP",
+    "subtitle": "Encuentra datos de geolocalización para cualquier dirección IP",
+    "copyright": "© 2025 Buscador de Localización IP"
+  },
+  "search": {
+    "placeholder": "Introduce dirección IP (ej. 8.8.8.8)",
+    "searchButton": "Buscar",
+    "myIpButton": "Usar Mi IP",
+    "loading": "Cargando..."
+  },
+  "result": {
+    "title": "Información de Localización",
+    "noData": "No hay datos de localización disponibles para esta IP.",
+    "error": "Error: {{message}}",
+    "fields": {
+      "ip": "IP",
+      "hostname": "Nombre del host",
+      "city": "Ciudad",
+      "region": "Región",
+      "country": "País",
+      "coordinates": "Coordenadas",
+      "org": "Organización",
+      "postal": "Código Postal",
+      "timezone": "Zona Horaria"
+    }
+  },
+  "api": {
+    "title": "Uso de la API",
+    "getLocation": "Obtener localización por IP:",
+    "getIp": "Obtener tu dirección IP:",
+    "copySuccess": "Comando copiado al portapapeles"
+  },
+  "ipDisplay": {
+    "currentIp": "Tu IP Actual: {{ip}}"
+  },
+  "language": {
+    "changeLanguage": "Cambiar idioma",
+    "suggestion": "¿Deseas cambiar a {{language}}?",
+    "yes": "Sí",
+    "no": "No",
+    "en": "English",
+    "zh": "中文",
+    "es": "Español"
+  }
+}
