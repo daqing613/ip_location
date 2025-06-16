@@ -81,11 +81,17 @@ jobs:
         tags: |
           ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
           ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.BUILD_ID }}
+    outputs:
+      BUILD_ID: ${{ steps.build-id.outputs.id }}      # expose build-id to downstream jobs
 
   deploy-to-aks:
     needs: build-and-push
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    env:                                            # ← declare job-level env vars
+      CONTAINER_REGISTRY: ${{ env.ACR_LOGIN_SERVER }}
+      IMAGE_NAME:           ${{ env.IMAGE_NAME }}
+      IMAGE_TAG:            ${{ needs.build-and-push.outputs.BUILD_ID }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -106,18 +112,15 @@ jobs:
     - name: Prepare Kubernetes manifests
       run: |
         cd kubernetes
-        # Remove timestamp replacement since we removed that annotation
-        sed -i "s|\${CONTAINER_REGISTRY}|${{ env.ACR_LOGIN_SERVER }}|g" deployment.yaml
-        sed -i "s|\${IMAGE_NAME}|${{ env.IMAGE_NAME }}|g" deployment.yaml
-        sed -i "s|\${IMAGE_TAG}|${{ env.BUILD_ID }}|g" deployment.yaml
-        # Use a simpler placeholder format that's less likely to cause issues
+        sed -i "s|\${CONTAINER_REGISTRY}|$CONTAINER_REGISTRY|g" deployment.yaml
+        sed -i "s|\${IMAGE_NAME}|$IMAGE_NAME|g" deployment.yaml
+        sed -i "s|\${IMAGE_TAG}|$IMAGE_TAG|g" deployment.yaml
         sed -i "s|DOMAIN_NAME_PLACEHOLDER|${{ env.DOMAIN_NAME }}|g" deployment.yaml
 
     # Deploy to AKS
     - name: Deploy to AKS
       run: |
         kubectl apply -f kubernetes/deployment.yaml -n ${{ env.NAMESPACE }}
-        # Force a restart to ensure changes are picked up
         kubectl rollout restart deployment/ip-location -n ${{ env.NAMESPACE }}
 
     # Verify deployment
