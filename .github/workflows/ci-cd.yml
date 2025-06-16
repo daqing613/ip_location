@@ -106,19 +106,21 @@ jobs:
     - name: Prepare Kubernetes manifests
       run: |
         cd kubernetes
-        TIMESTAMP=$(date +%s)
-        sed -i "s|\${TIMESTAMP}|$TIMESTAMP|g" deployment.yaml
-        sed -i "s|iplocationacr.azurecr.io/ip-location:latest|${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.BUILD_ID }}|g" deployment.yaml
-        sed -i "s|\${DOMAIN_NAME}|${{ env.DOMAIN_NAME }}|g" deployment.yaml
+        # Remove timestamp replacement since we removed that annotation
+        sed -i "s|\${CONTAINER_REGISTRY}|${{ env.ACR_LOGIN_SERVER }}|g" deployment.yaml
+        sed -i "s|\${IMAGE_NAME}|${{ env.IMAGE_NAME }}|g" deployment.yaml
+        sed -i "s|\${IMAGE_TAG}|${{ env.BUILD_ID }}|g" deployment.yaml
+        # Use a simpler placeholder format that's less likely to cause issues
+        sed -i "s|DOMAIN_NAME_PLACEHOLDER|${{ env.DOMAIN_NAME }}|g" deployment.yaml
 
-    # 部署到 AKS
+    # Deploy to AKS
     - name: Deploy to AKS
       run: |
         kubectl apply -f kubernetes/deployment.yaml -n ${{ env.NAMESPACE }}
-        # 如果需要，强制重启部署
+        # Force a restart to ensure changes are picked up
         kubectl rollout restart deployment/ip-location -n ${{ env.NAMESPACE }}
 
-    # 验证部署
+    # Verify deployment
     - name: Verify deployment
       run: |
         kubectl rollout status deployment/ip-location -n ${{ env.NAMESPACE }}

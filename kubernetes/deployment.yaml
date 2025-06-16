@@ -18,13 +18,10 @@ spec:
     metadata:
       labels:
         app: ip-location
-      annotations:
-        # Add a timestamp annotation to ensure pod recreation when config changes
-        rollme: "${TIMESTAMP}"
     spec:
       containers:
       - name: ip-location
-        image: iplocationacr.azurecr.io/ip-location:latest
+        image: ${CONTAINER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
@@ -73,10 +70,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - ${DOMAIN_NAME}
+    - "DOMAIN_NAME_PLACEHOLDER"  # Changed to a placeholder that's easier to replace
     secretName: ip-location-tls
   rules:
-  - host: ip-location.example.com
+  - host: "DOMAIN_NAME_PLACEHOLDER"  # Using the same placeholder here for consistency
     http:
       paths:
       - path: /
