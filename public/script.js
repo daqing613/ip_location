@@ -60,7 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
            // 创建IP显示元素
            const ipDisplay = document.createElement('div');
            ipDisplay.className = 'ip-display';
-           ipDisplay.innerHTML = `<i class="fas fa-info-circle"></i> ${i18next.t('ipDisplay.currentIp', { ip: `<strong>${ip}</strong>` })}`;
+           // 简化显示，只用图标代替文字标签，直接显示IP地址
+           ipDisplay.innerHTML = `<i class="fas fa-network-wired"></i> <strong>${ip}</strong>`;
+           ipDisplay.title = i18next.t('ipDisplay.ipTooltip', 'Your Current IP Address');
            
            // 在第一个卡片顶部插入
            const card = document.querySelector('.card');
@@ -152,4 +154,12 @@ document.addEventListener('DOMContentLoaded', function() {
             searchBtn.click();
         }
     });
+    
+    // 添加关闭语言建议弹窗的事件处理
+    const closeLanguageSuggestion = document.getElementById('closeLanguageSuggestion');
+    if (closeLanguageSuggestion) {
+        closeLanguageSuggestion.addEventListener('click', function() {
+            document.getElementById('languageSuggestion').classList.add('hidden');
+        });
+    }
 });

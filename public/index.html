@@ -29,10 +29,16 @@
         </div>
         <div id="languageSuggestion" class="language-suggestion hidden">
             <div class="suggestion-content">
-                <span id="suggestionText"></span>
+                <div class="suggestion-header">
+                    <i class="fas fa-language"></i>
+                    <span id="suggestionText"></span>
+                    <button class="close-btn" id="closeLanguageSuggestion">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
                 <div class="suggestion-buttons">
-                    <button id="acceptLanguage" data-i18n="language.yes">Yes</button>
-                    <button id="declineLanguage" data-i18n="language.no">No</button>
+                    <button id="declineLanguage" class="btn-secondary" data-i18n="language.no">No</button>
+                    <button id="acceptLanguage" class="btn-primary" data-i18n="language.yes">Yes</button>
                 </div>
             </div>
         </div>
