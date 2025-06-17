@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
            // 创建IP显示元素
            const ipDisplay = document.createElement('div');
            ipDisplay.className = 'ip-display';
-           ipDisplay.innerHTML = `<i class="fas fa-info-circle"></i> Your Current IP: <strong>${ip}</strong>`;
+           ipDisplay.innerHTML = `<i class="fas fa-info-circle"></i> ${i18next.t('ipDisplay.currentIp', { ip: `<strong>${ip}</strong>` })}`;
            
            // 在第一个卡片顶部插入
            const card = document.querySelector('.card');
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
        } catch (error) {
            console.error('Error fetching IP:', error);
        }
-   }    // Function to display location data
+   }// Function to display location data
     function displayLocationData(data) {
         result.style.display = 'block';
         

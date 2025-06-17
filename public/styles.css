@@ -36,6 +36,7 @@ body {
     padding: 2rem 0;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .header-container {
@@ -284,4 +285,109 @@ button:active {
     border-left: 4px solid #ef4444;
     background-color: #fee2e2;
     border-radius: 4px;
+}
+
+/* Language Selector Styles */
+.language-selector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.lang-btn {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lang-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.language-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-top: 5px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.language-options.show {
+    display: block;
+}
+
+.language-option {
+    padding: 8px 16px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.language-option:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+
+.language-suggestion {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 12px;
+    max-width: 300px;
+    z-index: 100;
+    transition: all 0.3s ease;
+    transform: translateX(0);
+}
+
+.language-suggestion.hidden {
+    transform: translateX(110%);
+    opacity: 0;
+}
+
+.suggestion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.suggestion-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+#acceptLanguage {
+    background-color: var(--secondary-color);
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+#declineLanguage {
+    background-color: #cbd5e1;
+    color: var(--text-color);
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
